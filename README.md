@@ -36,4 +36,15 @@
        -> Jupyter Notebook
 
 
-        
+   # Results
+
+      Logistic Regression achieved:
+
+      Accuracy : 81%
+      ROC-AUC : 0.884
+
+      Key predictive factors:
+
+             - Aptitude Test Score
+             - Placement Training
+             - Extracurricular Activities
