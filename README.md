@@ -69,3 +69,24 @@ This project focuses on **interpretability, structured experimentation, and repr
 
 - Aptitude Test Score is the most important predictor of placement.
 - Placement training and extracurricular activities significantly influence placement probability.
+
+---
+## Project Structure
+
+Student-Placement-Prediction
+│
+├── data
+│   ├── raw
+│   │   └── placement_data.csv
+│   └── processed
+│
+├── notebooks
+│   ├── 01_data_exploration.ipynb
+│   ├── 02_feature_engineering.ipynb
+│   └── 03_model_training.ipynb
+│
+├── images
+│   └── roc_curve.png
+│
+├── requirements.txt
+└── README.md
