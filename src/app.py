@@ -1,4 +1,5 @@
 import streamlit as st 
+import os
 import joblib
 
 st.title("Student Placement Prediction System")
@@ -11,7 +12,7 @@ internship_experience = st.number_input("Number Of Internships", min_value=0, ma
 projects_completed = st.number_input("Number Of Projects Completed", min_value=0, max_value=10, step=1) 
 workshops_attended = st.number_input("Number Of Workshops Attended", min_value=0, max_value=10, step=1)
 aptitude_score = st.number_input("Aptitude Score", min_value=0, max_value=100, step=1)
-softskills_rating = st.number_input("Soft Skills Rating", min_value=0, max_value=5, step=1)
+softskills_rating = st.number_input("Soft Skills Rating", min_value=0.0, max_value=5.0, step=0.1)
 extracurricular_activities = st.selectbox("Extracurricular Activities", ["Yes", "No"])
 training = st.selectbox("Placement Training", ["Yes", "No"])
 ssc=st.number_input("SSC Percentage", min_value=0.0, max_value=100.0, step=0.01)
@@ -22,8 +23,15 @@ hsc=st.number_input("HSC Percentage", min_value=0.0, max_value=100.0, step=0.01)
 st.write("Click the button to predict placement status:")
 
 
-model = joblib.load("model.pkl")
-scaler = joblib.load("scaler.pkl")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+model_path = os.path.join(BASE_DIR, "..", "models", "model.pkl")
+
+model = joblib.load(model_path)
+
+
+scaler_path = os.path.join(BASE_DIR, "..", "models", "scaler.pkl")
+scaler = joblib.load(scaler_path)
 
 if st.button("Predict"):
    
