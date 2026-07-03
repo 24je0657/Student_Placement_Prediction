@@ -124,6 +124,6 @@ Mohammad Salman
 B.Tech CSE
 IIT (ISM) Dhanbad
 
-LinkedIn :
+LinkedIn :https://www.linkedin.com/in/salman-mohammad-192ba035b?
 
 Email :salmanmohammad14113@gmail.com
