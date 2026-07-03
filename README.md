@@ -1,92 +1,129 @@
 # Student Placement Prediction System
 
-## Overview
+> An end-to-end Machine Learning application that predicts student placement outcomes using academic performance, internships, projects, certifications, aptitude scores and soft skills.
 
-This project aims to build a machine learning system to predict whether a student is likely to get placed based on academic performance, technical skills, and other relevant factors. 
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-ML-orange)
+![Pandas](https://img.shields.io/badge/Pandas-Data%20Analysis-purple)
+![Streamlit](https://img.shields.io/badge/Streamlit-Web%20App-red)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-The objective is to analyze historical placement data and identify patterns that influence placement outcomes.
+## Project Overview
 
----
+Campus placement decisions depend on multiple academic, technical and extracurricular factors. Understanding how these factors influence placement can help students identify areas for improvement and enable institutions to provide targeted guidance.
 
-## Problem Statement
+This project develops an end-to-end machine learning pipeline that predicts placement outcomes using historical student data. The workflow includes data preprocessing, exploratory data analysis, feature engineering, model training, evaluation and deployment through an interactive Streamlit application.
 
-Campus placements are influenced by multiple factors such as:
+## Live Demo
 
-- CGPA
-- Internship experience
-- Project work
-- Workshop/Certificates
-- Technical skills
-- Communication ability
-- Academic consistency
+🚀 **Try the deployed application here:**
 
-However, the relationship between these factors and final placement outcomes is often unclear to students.
+**🔗 Live Demo:** https://studentplacementprediction-system.streamlit.app/
 
-The goal of this project is to design and implement a **data-driven system** that:
+The web application allows users to:
 
-- Analyzes historical student data
-- Identifies important features influencing placement
-- Predicts the probability of a student getting placed
-- Evaluates model performance using appropriate metrics
+- Predict a student's placement status in real time.
+- View the probability of placement.
+- Enter academic, aptitude, internship, project, certification, and extracurricular details through an intuitive interface.
+- Receive instant predictions powered by the trained machine learning model.
 
-The system uses **supervised machine learning techniques** to model placement outcomes and provide insights into key factors that impact recruitment decisions.
 
-This project focuses on **interpretability, structured experimentation, and reproducibility** rather than only maximizing model accuracy.
+## Features
 
----
+- Exploratory Data Analysis (EDA)
+- Data preprocessing pipeline
+- Feature scaling using StandardScaler
+- Categorical encoding
+- Stratified train-test split
+- Multiple ML algorithms
+- Hyperparameter tuning with GridSearchCV
+- 5-fold Cross Validation
+- ROC-AUC evaluation
+- Feature Importance Analysis
+- Interactive Streamlit Web Application
 
-## Objectives
 
-- Perform Exploratory Data Analysis (EDA)
-- Engineer meaningful features
-- Train and evaluate multiple models
-- Compare performance using standard metrics
-- Analyze limitations and potential biases
+## Machine Learning Pipeline
 
----
+Data Collection
 
-## Tech Stack
+↓
 
-- Python
-- Pandas & NumPy
-- Matplotlib & Seaborn
-- Scikit-learn
-- Jupyter Notebook
+Data Cleaning
 
----
+↓
 
-## Results
+Exploratory Data Analysis
 
-| Model | Accuracy | ROC-AUC |
-|------|------|------|
-| Logistic Regression | 0.81 | 0.884 |
-| Decision Tree | 0.72 | 0.71 |
-| Random Forest | 0.79 | 0.867 |
+↓
 
----
+Feature Engineering
 
-## Key Insights
+↓
 
-- Aptitude Test Score is the most important predictor of placement.
-- Placement training and extracurricular activities significantly influence placement probability.
+Data Preprocessing
 
----
-## Project Structure
+↓
 
-Student-Placement-Prediction
+Model Training
+
+↓
+
+Hyperparameter Optimization
+
+↓
+
+Model Evaluation
+
+↓
+
+Prediction
+
+
+```text
+Student_Placement_Prediction
 │
 ├── data
 │   ├── raw
-│   │   └── placement_data.csv
 │   └── processed
 │
 ├── notebooks
-│   ├── 01_data_exploration.ipynb
-│   ├── 02_feature_engineering.ipynb
-│   └── 03_model_training.ipynb
 │
 ├── images
-│   └── roc_curve.png
+│
+├── models
+│
+├── app.py
 │
 ├── requirements.txt
+│
 └── README.md
+```
+
+## Model Performance
+
+| Model | Accuracy | ROC-AUC | Remarks |
+|:------|:--------:|:-------:|:--------|
+| **Logistic Regression** | **81%** | **0.884** | Best overall performance, achieving the highest classification accuracy and ROC-AUC with strong generalization. |
+| Decision Tree | 72% | 0.714 | Simple and interpretable model, but prone to overfitting, resulting in lower predictive performance. |
+| Random Forest | 79% | 0.867 | Ensemble model with improved robustness and competitive performance, though slightly below Logistic Regression. |
+
+## Future Improvements
+
+- Deep Learning models
+- Explainable AI using SHAP
+- Automated feature engineering
+- Real-time database integration
+- Resume-based placement prediction
+
+
+## Author
+
+Mohammad Salman
+
+B.Tech CSE
+IIT (ISM) Dhanbad
+
+LinkedIn :
+
+Email :salmanmohammad14113@gmail.com
