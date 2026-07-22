@@ -7,3 +7,5 @@ streamlit
 joblib
 jupyter
 ipykernel
+plotly
+shap
