@@ -108,10 +108,23 @@ Student_Placement_Prediction
 | Decision Tree | 72% | 0.714 | Simple and interpretable model, but prone to overfitting, resulting in lower predictive performance. |
 | Random Forest | 79% | 0.867 | Ensemble model with improved robustness and competitive performance, though slightly below Logistic Regression. |
 
+## Dashboard & Prediction
+
+<p align="center">
+<img src="Streamlit_Images/dashboard.png" width="48%">
+<img src="Streamlit_Images/prediction.png" width="48%">
+</p>
+
+## Analytics & Recommendations
+
+<p align="center">
+<img src="Streamlit_Images/analytics.png" width="48%">
+<img src="Streamlit_Images/recommendations.png" width="48%">
+</p>
+
 ## Future Improvements
 
 - Deep Learning models
-- Explainable AI using SHAP
 - Automated feature engineering
 - Real-time database integration
 - Resume-based placement prediction
