@@ -23,10 +23,69 @@ import pdfplumber
 from docx import Document
 
 
-def extract_text_from_pdf(file_path: str) -> str:
+MIN_CHARS_PER_PAGE = 25  # below this, treat the page as likely scanned/image-based
+
+
+def classify_pdf(file_path: str, x_tolerance: float = 0.5) -> dict:
+    """
+    Determine whether a PDF is text-based, scanned, or mixed, without
+    doing any OCR. This is the fork-point decision: text-based pages
+    go through pdfplumber extraction (already built), scanned pages
+    will need OCR (not built yet).
+
+    A page is flagged "likely_scanned" if its extracted text is under
+    MIN_CHARS_PER_PAGE characters. This is more reliable than a plain
+    None check — some scanned pages leak a few stray characters
+    (watermarks, page numbers) even with no real extractable content.
+
+    Returns a dict:
+        {
+            "total_pages": int,
+            "text_pages": [page numbers with real text],
+            "scanned_pages": [page numbers likely needing OCR],
+            "overall": "text-based" | "scanned" | "mixed"
+        }
+    """
+    text_pages = []
+    scanned_pages = []
+
+    with pdfplumber.open(file_path) as pdf:
+        total_pages = len(pdf.pages)
+        for page_num, page in enumerate(pdf.pages, start=1):
+            text = page.extract_text(x_tolerance=x_tolerance) or ""
+            char_count = len(text.strip())
+            if char_count < MIN_CHARS_PER_PAGE:
+                scanned_pages.append(page_num)
+            else:
+                text_pages.append(page_num)
+
+    if scanned_pages and text_pages:
+        overall = "mixed"
+    elif scanned_pages:
+        overall = "scanned"
+    else:
+        overall = "text-based"
+
+    return {
+        "total_pages": total_pages,
+        "text_pages": text_pages,
+        "scanned_pages": scanned_pages,
+        "overall": overall,
+    }
+
+
+def extract_text_from_pdf(file_path: str, x_tolerance: float = 0.5) -> str:
     """
     Extract text from a PDF, page by page, in reading order as best as
     pdfplumber can determine it.
+
+    x_tolerance controls how large a horizontal gap must be before
+    pdfplumber treats it as a word boundary rather than the same word.
+    Default of 0.5 was chosen based on diagnostic testing on a resume
+    where the default (3) caused words to merge together. This value
+    may not generalize to every resume/font — if you see over-split
+    words (e.g. "CGPA:" splitting into "CGPA" ":"), try a higher value
+    for that specific file.
 
     Note: multi-column resumes can still extract out of visual order —
     this is a known limitation of PDF text extraction in general, not
@@ -36,7 +95,7 @@ def extract_text_from_pdf(file_path: str) -> str:
     pages_text = []
     with pdfplumber.open(file_path) as pdf:
         for page_num, page in enumerate(pdf.pages, start=1):
-            text = page.extract_text()
+            text = page.extract_text(x_tolerance=x_tolerance)
             if text:
                 pages_text.append(text)
             else:
@@ -62,7 +121,7 @@ def extract_text_from_docx(file_path: str) -> str:
     return "\n".join(paragraphs)
 
 
-def extract_text(file_path: str) -> str:
+def extract_text(file_path: str, x_tolerance: float = 0.5) -> str:
     """Dispatch to the right extractor based on file extension."""
     path = Path(file_path)
     suffix = path.suffix.lower()
@@ -71,7 +130,7 @@ def extract_text(file_path: str) -> str:
         raise FileNotFoundError(f"No such file: {file_path}")
 
     if suffix == ".pdf":
-        return extract_text_from_pdf(str(path))
+        return extract_text_from_pdf(str(path), x_tolerance=x_tolerance)
     elif suffix == ".docx":
         return extract_text_from_docx(str(path))
     else:
