@@ -20,7 +20,9 @@ import sys
 from pathlib import Path
 
 import pdfplumber
+import pytesseract
 from docx import Document
+from pdf2image import convert_from_path
 
 
 MIN_CHARS_PER_PAGE = 25  # below this, treat the page as likely scanned/image-based
@@ -72,6 +74,67 @@ def classify_pdf(file_path: str, x_tolerance: float = 0.5) -> dict:
         "scanned_pages": scanned_pages,
         "overall": overall,
     }
+
+
+def extract_text_from_scanned_pdf(file_path: str) -> str:
+    """
+    Extract text from a scanned/image-based PDF using OCR (Tesseract).
+
+    Converts each page to an image (pdf2image, needs poppler installed
+    at the system level), then runs OCR on each image (pytesseract,
+    needs tesseract-ocr installed at the system level).
+
+    This will always run and always return SOMETHING for a scanned
+    page, no matter how poor the source image quality is — per project
+    decision, scanned resumes are OCR'd automatically rather than
+    rejected. OCR output quality on a low-quality phone photo may
+    still be poor, so downstream cleaning (Stage 2) needs to expect
+    noisier input from this path than from the text-based path.
+    """
+    images = convert_from_path(file_path)
+    pages_text = []
+    for page_num, image in enumerate(images, start=1):
+        text = pytesseract.image_to_string(image)
+        pages_text.append(text)
+    return "\n".join(pages_text)
+
+
+def extract_text_smart(file_path: str, x_tolerance: float = 0.5) -> str:
+    """
+    Full routing function: classifies the PDF, then sends text-based
+    pages through pdfplumber and scanned pages through OCR, matching
+    the production architecture (student upload -> extraction ->
+    structured fields -> placement model).
+
+    Runs OCR automatically on any page flagged as scanned/mixed, no
+    matter how long it takes — per project decision, robustness to
+    unpredictable student uploads matters more than speed here.
+    """
+    classification = classify_pdf(file_path, x_tolerance=x_tolerance)
+
+    if classification["overall"] == "text-based":
+        return extract_text_from_pdf(file_path, x_tolerance=x_tolerance)
+    elif classification["overall"] == "scanned":
+        return extract_text_from_scanned_pdf(file_path)
+    else:
+        # Mixed: extract text-based pages normally, OCR only the pages
+        # that actually need it — converting the whole PDF to images
+        # when only 1 page needs OCR wastes time/memory on pages we
+        # already have real text for.
+        pages_text = []
+        with pdfplumber.open(file_path) as pdf:
+            for page_num, page in enumerate(pdf.pages, start=1):
+                if page_num in classification["text_pages"]:
+                    text = page.extract_text(x_tolerance=x_tolerance) or ""
+                    pages_text.append(text)
+                else:
+                    # Render just this one page, not the whole document.
+                    page_image = convert_from_path(
+                        file_path, first_page=page_num, last_page=page_num
+                    )[0]
+                    text = pytesseract.image_to_string(page_image)
+                    pages_text.append(text)
+        return "\n".join(pages_text)
 
 
 def extract_text_from_pdf(file_path: str, x_tolerance: float = 0.5) -> str:
@@ -130,7 +193,7 @@ def extract_text(file_path: str, x_tolerance: float = 0.5) -> str:
         raise FileNotFoundError(f"No such file: {file_path}")
 
     if suffix == ".pdf":
-        return extract_text_from_pdf(str(path), x_tolerance=x_tolerance)
+        return extract_text_smart(str(path), x_tolerance=x_tolerance)
     elif suffix == ".docx":
         return extract_text_from_docx(str(path))
     else:
